@@ -15,11 +15,11 @@ def hello_world():
 class Storage():
   def __init__(self):
     self.db = MySQLdb.connect(
-      user   = os.getenv('MYSQL_USERNAME'),
-      passwd = os.getenv('MYSQL_PASSWORD'),
-      db     = os.getenv('MYSQL_INSTANCE_NAME'),
-      host   = os.getenv('MYSQL_PORT_3306_TCP_ADDR'),
-      port   = int(os.getenv('MYSQL_PORT_3306_TCP_PORT'))
+      user   = os.getenv('db_user'),
+      passwd = os.getenv('Mytest123**'),
+      db     = os.getenv('test_db'),
+      host   = os.getenv('localhost'),
+      port   = int(os.getenv('3306'))
     )
 
     cur = self.db.cursor()
