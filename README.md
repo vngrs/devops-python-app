@@ -4,3 +4,5 @@ This application is a simple web application that keeps the scores of devops and
 The application contains docker container. The Docker image runs on Alpine Linux. Kubernetes engine is used for container orchestration.
 
 Two separate branches were created for the application. One of them is the local branch and the other is the main branch. The application developer develops and tests the code on its own environment. It then merges the changes into the main branch. The change on the main branch is automatically detected and deployment is made to the product environment.
+
+Kubernetes secrets are used for application variables on product environment. In the local development environment, the variables are kept on the OS environment variable.
