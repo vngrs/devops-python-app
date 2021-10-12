@@ -1,0 +1,21 @@
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "python-app-hpa-vc7c"
+  namespace: "default"
+  labels:
+    app: "python-app"
+    env: "prod"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "python-app"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
