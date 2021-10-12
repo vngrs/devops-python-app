@@ -5,4 +5,6 @@ The application contains docker container. The Docker image runs on Alpine Linux
 
 Two separate branches were created for the application. One of them is the local branch and the other is the main branch. The application developer develops and tests the code on its own environment. It then merges the changes into the main branch. The change on the main branch is automatically detected and deployment is made to the product environment.
 
-Kubernetes secrets are used for application variables on product environment. In the local development environment, the variables are kept on the OS environment variable.
+Kubernetes secrets and configMaps are used for application variables on product environment. In the local development environment, the variables are kept on the OS environment variable.
+
+Google cloud build is used for CI/CD pipeline process. When a change is detected in the main branch, cloud build creates a new docker image and deploys the new image to kubernetes.
