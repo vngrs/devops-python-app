@@ -1,0 +1,177 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: python-app
+    env: prod
+  name: python-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-app
+      env: prod
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: python-app
+        env: prod
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_INSTANCE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_INSTANCE_NAME
+                  name: python-app-config-mrqi
+            - name: MYSQL_PORT_3306_TCP_ADDR
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_PORT_3306_TCP_ADDR
+                  name: python-app-config-mrqi
+            - name: MYSQL_PORT_3306_TCP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_PORT_3306_TCP_PORT
+                  name: python-app-config-mrqi
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MYSQL_USERNAME
+                  name: credentials
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MYSQL_PASSWORD
+                  name: credentials
+          image: >-
+            gcr.io/kubernetesproject-328818/github.com/emrahbickingc/devops-python-app
+          imagePullPolicy: IfNotPresent
+          name: vngrs-sha256-1
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: python-app
+    env: prod
+  managedFields:
+    - apiVersion: autoscaling/v2beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+          'f:labels':
+            .: {}
+            'f:app': {}
+            'f:env': {}
+        'f:spec':
+          'f:maxReplicas': {}
+          'f:metrics': {}
+          'f:minReplicas': {}
+          'f:scaleTargetRef':
+            'f:apiVersion': {}
+            'f:kind': {}
+            'f:name': {}
+      manager: kubectl-client-side-apply
+      operation: Update
+      time: '2021-10-12T21:40:24Z'
+    - apiVersion: autoscaling/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:autoscaling.alpha.kubernetes.io/conditions': {}
+        'f:status':
+          'f:currentReplicas': {}
+      manager: vpa-recommender
+      operation: Update
+      time: '2021-10-12T21:40:40Z'
+  name: python-app-hpa-vc7c
+  namespace: default
+spec:
+  maxReplicas: 2
+  metrics:
+    - resource:
+        name: cpu
+        targetAverageUtilization: 80
+      type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: python-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  generateName: python-app-
+  labels:
+    app: python-app
+    env: prod
+  managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:generateName': {}
+          'f:labels':
+            .: {}
+            'f:app': {}
+            'f:env': {}
+        'f:spec':
+          'f:externalTrafficPolicy': {}
+          'f:ports':
+            .: {}
+            'k:{"port":80,"protocol":"TCP"}':
+              .: {}
+              'f:port': {}
+              'f:protocol': {}
+              'f:targetPort': {}
+          'f:selector':
+            .: {}
+            'f:app': {}
+            'f:env': {}
+          'f:sessionAffinity': {}
+          'f:type': {}
+      manager: GoogleCloudConsole
+      operation: Update
+      time: '2021-10-12T22:47:29Z'
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:finalizers':
+            .: {}
+            'v:"service.kubernetes.io/load-balancer-cleanup"': {}
+        'f:status':
+          'f:loadBalancer':
+            'f:ingress': {}
+      manager: kube-controller-manager
+      operation: Update
+      time: '2021-10-12T22:48:23Z'
+  name: python-app-76rl8
+  namespace: default
+spec:
+  clusterIP: 10.44.12.96
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 32346
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: python-app
+    env: prod
+  sessionAffinity: None
+  type: LoadBalancer

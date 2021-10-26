@@ -1,0 +1,50 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "python-app"
+  namespace: "default"
+  labels:
+    app: "python-app"
+    env: "prod"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "python-app"
+      env: "prod"
+  template:
+    metadata:
+      labels:
+        app: "python-app"
+        env: "prod"
+    spec:
+      containers:
+      - name: "vngrs-sha256-1"
+        image: "gcr.io/kubernetesproject-328818/vngrs@sha256:71440017a605152d99328ee78b264268327d4b7efb0c8eb0255901232616b2dd"
+        env:
+        - name: "MYSQL_INSTANCE_NAME"
+          valueFrom:
+            configMapKeyRef:
+              key: "MYSQL_INSTANCE_NAME"
+              name: "python-app-config-mrqi"
+        - name: "MYSQL_PORT_3306_TCP_ADDR"
+          valueFrom:
+            configMapKeyRef:
+              key: "MYSQL_PORT_3306_TCP_ADDR"
+              name: "python-app-config-mrqi"
+        - name: "MYSQL_PORT_3306_TCP_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key: "MYSQL_PORT_3306_TCP_PORT"
+              name: "python-app-config-mrqi"
+        - name: "MYSQL_USERNAME"
+          valueFrom:
+            secretKeyRef:
+              key: "MYSQL_USERNAME"
+              name: "credentials"
+        - name: "MYSQL_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              key: "MYSQL_PASSWORD"
+              name: "credentials"
